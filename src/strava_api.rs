@@ -124,12 +124,13 @@ pub fn request_activity_stream(activity_id: String, keys: Vec<String>) -> Vec<u8
     let auth_header = format!("{}{}", auth_code, short_access_token.token_string);
 
     // let keys = vec!["one", "two", "three"];
-    let mut url: String = format!("https://www.strava.com/api/v3/activities/{}/streams?", activity_id);
+    let mut url: String = format!("https://www.strava.com/api/v3/activities/{}/streams?keys=", activity_id);
     // "https://www.strava.com/api/v3/activities/{}/streams?keys=time,latlng&key_by_type=true"
     for k in keys{
         url.push_str(&k);
         url.push(',');
     }
+    url.pop();
     url.push_str("&key_by_type=true");
 
     println!("{}", url);

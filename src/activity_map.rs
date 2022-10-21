@@ -34,7 +34,7 @@ struct ActivityMapPoint{
 impl ActivityMap {
     pub fn build_from_json(id: String, json_data: Value) -> ActivityMap{
         let distance_points = json_data["distance"]["data"].as_array().unwrap();
-        let time_points = json_data["time"]["data"].as_array().unwrap();
+        let time_points = json_data["time"]["data"].as_array().unwrap_or_else(|| panic!("Error with time points response"));
         let latlng_points = json_data["latlng"]["data"].as_array().unwrap();
 
         //Check if map points returned from api line up properly
@@ -63,7 +63,7 @@ impl ActivityMap {
         write_to_file(file_path, bincode::serialize(&self).unwrap());
     }
 
-    pub fn get_activity_map_from_file(id: String) -> ActivityMap {
+    pub fn get_activity_map_from_file(id: &str) -> ActivityMap {
         let file_name = format!("activity_map_{}", id);
         let file_path = Path::new(&file_name);
 
@@ -84,9 +84,37 @@ impl ActivityMap {
         activity_map
     }
 
-    pub fn get_location_points(&self){
+    // pub fn get_map_points(&self) -> &Vec<ActivityMapPoint>{
+    //     &self.map_points
+    // }
+
+    pub fn get_location_points(&self) -> Vec<&String>{
+        let mut location_points = Vec::new();
         for mp in &self.map_points{
-            print!("{} ", mp.latlng)
+            location_points.push(&mp.latlng);
+        }
+        location_points
+    }
+
+    pub fn get_time_points(&self) -> Vec<&String>{
+        let mut time_points = Vec::new();
+        for mp in &self.map_points{
+            time_points.push(&mp.time);
+        }
+        time_points
+    }
+
+    pub fn get_distance_points(&self) -> Vec<&String>{
+        let mut distance_points = Vec::new();
+        for mp in &self.map_points{
+            distance_points.push(&mp.distance);
+        }
+        distance_points
+    }
+
+    pub fn show_first_twenty(&self){
+        for mp in &self.map_points[0..20]{
+            println!("geo: {} - time {} - distance {}", mp.latlng, mp.time, mp.distance);
         }
     }
 

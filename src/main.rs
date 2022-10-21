@@ -26,7 +26,9 @@ fn main() {
 
     // get_short_access_token();
     // get_sp();
-    get_activity_stream();
+    // get_activity_stream();
+    // load_activity_map();
+    get_google_maps();
    
 
 }
@@ -110,105 +112,6 @@ fn main() {
 //     });
 // }
 
-// fn get_activity_stream(){
-//     let test_activity_id = "7955070771";
-//     let auth_code = "Authorization: Bearer ";
-//     let short_access_token = get_short_access_token();
-//     let auth_header = format!("{}{}", auth_code, short_access_token.token_string);
-
-//     let mut headers = List::new();
-//     headers.append(&auth_header).unwrap_or_else(|err| panic!("failed to add header. Err: {:?}", err));
-
-//     let mut easy2 = Easy2::new(Collector(Vec::new()));
-//     easy2.url("https://www.strava.com/api/v3/activities/7955070771/streams?keys=time,latlng&key_by_type=true").unwrap_or_else(|err| panic!("problem connecting to activity stream url {:?}", err));
-//     easy2.get(true).unwrap();
-//     easy2.http_headers(headers).unwrap();
-    
-//     easy2.perform().unwrap();
-
-//     let contents = &easy2.get_ref().0;
-//     let json: Value = serde_json::from_str(str::from_utf8(&contents).unwrap()).unwrap();
-
-//     // println!("distance length = {}", json["distance"].as_array().unwrap().len());
-//     // println!("time length = {}", json["time"].as_array().unwrap().len());
-//     // println!("latlng length = {}", json["latlng"].as_array().unwrap().len());
-
-//     println!("(DISTANCE) {}", json["distance"]["data"].as_array().unwrap().len());
-//     println!("(TIME) {}", json["time"]["data"].as_array().unwrap().len());
-//     println!("(LATLNG) {}", json["latlng"]["data"].as_array().unwrap().len());
-//     // file.write_all(&contents).unwrap_or_else(|err| {
-//     //     panic!("Problem writing GPX data to file: {:?}", err);
-//     // });
-
-//     let activity_map = ActivityMap::build_from_json(test_activity_id.to_owned(), json);
-// }
-
-// #[derive(Serialize, Deserialize, Debug)]
-// struct ActivityMap{
-//     id: String,
-//     map_points: Vec<ActivityMapPoint>,
-// }
-
-// impl ActivityMap {
-//     pub fn build_from_json(id: String, json_data: Value) -> ActivityMap{
-//         let distance_points = json_data["distance"]["data"].as_array().unwrap();
-//         let time_points = json_data["time"]["data"].as_array().unwrap();
-//         let latlng_points = json_data["latlng"]["data"].as_array().unwrap();
-
-//         //Check if map points returned from api line up properly
-//         if (distance_points.len() != time_points.len() || distance_points.len() != latlng_points.len()){
-//             panic!("distance, time, latlng dont line up");
-//         }
-
-//         let mut map_point_vec: Vec<ActivityMapPoint> = Vec::new();
-
-//         for index in 0..distance_points.len(){
-//             let map_point = ActivityMapPoint{
-//                 distance: distance_points[index].to_string(),
-//                 time: time_points[index].to_string(),
-//                 latlng: latlng_points[index].to_string()
-//             };
-
-//             map_point_vec.push(map_point);
-//         }
-
-//         ActivityMap{id: id, map_points: map_point_vec}
-//     }
-
-//     pub fn save_to_file(&self){
-//         let file_name = format!("activity_map_{}", self.id);
-//         let file_path = Path::new(&file_name);
-//         write_to_file(file_path, bincode::serialize(&self).unwrap());
-//     }
-
-//     pub fn get_activity_map_from_file(id: String) -> ActivityMap {
-//         let file_name = format!("activity_map_{}", id);
-//         let file_path = Path::new(&file_name);
-
-//         let mut file = File::open(&file_path).unwrap_or_else(|err| {
-//             panic!("problem opening file: {:?} Error {:?}", file_path.display(), err);
-//         });
-
-//         let mut buf: Vec<u8> = Vec::new();
-
-//         file.read_to_end(&mut buf).unwrap_or_else(|err| {
-//             panic!("problem reading activity map into buffer {:?}", err);
-//         });
-
-//         let activity_map: ActivityMap = bincode::deserialize(&buf).unwrap_or_else(|err| {
-//             panic!("problem deserializing map buffer {:?}", err);
-//         });
-
-//         activity_map
-//     }
-// }
-
-// #[derive(Serialize, Deserialize, Debug)]
-// struct ActivityMapPoint{
-//     distance: String,
-//     time: String,
-//     latlng: String,
-// }
 
 pub fn epoch_to_est_time(time: String){
 

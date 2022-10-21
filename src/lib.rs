@@ -9,6 +9,10 @@ use crate::refresh_token::RefreshToken;
 mod strava_api;
 use crate::strava_api::{request_new_access_tokens, request_activity_stream};
 
+//this should handle requests to google and return data
+pub mod google_maps_api;
+use google_maps_api::make_maps_request;
+
 mod activity_map;
 use crate::activity_map::ActivityMap;
 
@@ -134,6 +138,7 @@ pub fn get_activity_stream(){
     let contents = request_activity_stream(activity_id.to_string(), keys);
     let json: Value = serde_json::from_str(str::from_utf8(&contents).unwrap()).unwrap();
 
+    println!("{}", json["time"]);
     // file.write_all(&contents).unwrap_or_else(|err| {
     //     panic!("Problem writing GPX data to file: {:?}", err);
     // });
@@ -141,7 +146,16 @@ pub fn get_activity_stream(){
     let activity_map = ActivityMap::build_from_json(activity_id.to_owned(), json);
 
     // println!("{}", activity_map.)
-    activity_map.get_location_points();
+    // activity_map.get_location_points();
+    activity_map.show_first_twenty();
+    activity_map.save_to_file();
+}
+
+pub fn load_activity_map(){
+    let activity_id = "7955070771";
+    let activity_map = ActivityMap::get_activity_map_from_file(activity_id);
+    println!("FIRST 20");
+    activity_map.show_first_twenty()
 }
 
 //using this to remove the (\) and (") from the parsed json data, might be unnecessary idk
@@ -151,20 +165,25 @@ fn remove_extra_characters(str: &str) -> String {
     result
 }
 
+fn remove_bracket_characters(str: String) -> String{
+    str.replace(&['[',']'][..], "")
+}
+
 fn read_json(raw_json:&str) -> Value {
     let parsed: Value = serde_json::from_str(raw_json).unwrap();
     parsed
 }
 
-
-
-
-
-//this should handle requests to google and return data
-mod google_map_api{
-
+pub fn get_google_maps(){
+    let activity_map = ActivityMap::get_activity_map_from_file("7955070771");
+    make_maps_request(activity_map);
 }
+
+
+
+
 
 pub fn get_sp(){
     request_specific_activity("7955070771".to_string());
 }
+
